@@ -1,0 +1,16 @@
+version: v1
+name: ecpgdepot-v1-scanner
+type: workflow
+tags:
+  - postgres
+  - scanner
+description: The job scans schema tables and register metadata
+workflow:
+  dag:
+    - name: postgresdepotjob
+      description: The job scans schema from postgres depot tables ecpgdepot and register metadata to metis
+      spec:
+        stack: scanner:2.0
+        compute: runnable-default
+        stackSpec:
+          depot: dataos://ecpgdepot          # Postgres depot name

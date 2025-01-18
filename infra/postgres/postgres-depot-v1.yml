@@ -19,7 +19,7 @@ depot:
         - postgres-v1-rw
       allkeys: true
 
-  jdbc:
+  spec:
     subprotocol: postgresql
     host: database-1.cgqykwjhiqrt.us-east-1.rds.amazonaws.com # Replace with the database host URL
     port: 5432  # Replace with the database port number
