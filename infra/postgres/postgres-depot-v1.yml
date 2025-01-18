@@ -1,0 +1,26 @@
+# PostgreSQL Depot Manifest
+
+name: ecpgdepot    # Unique name for the Depot
+version: v1  # Manifest version
+type: depot       # Type of the Resource
+layer: user
+depot:
+  type: jdbc                 
+  description: Postgres Depot V1 to analyse booking data
+  external: true
+  secrets:
+    - name: postgres-v1-r   # Reference the Instance Secret for read & write access
+      keys: 
+        - postgres-v1-r
+      allkeys: true         # FOr multiple key
+
+    - name: postgres-v1-rw    # Reference the Instance Secret for read access
+      keys: 
+        - postgres-v1-rw
+      allkeys: true
+
+  jdbc:
+    subprotocol: postgresql
+    host: database-1.cgqykwjhiqrt.us-east-1.rds.amazonaws.com # Replace with the database host URL
+    port: 5432  # Replace with the database port number
+    database: analytics_insights_db  # Replace with the database name to connect to
