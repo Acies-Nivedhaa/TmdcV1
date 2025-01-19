@@ -1,0 +1,64 @@
+version: v1
+name: wf-userlocation-v1
+type: workflow
+tags:
+  - Campaign and Customer Performance Analytics
+description: This job read and write user location data from to postgresql
+title: User Location Data
+workflow:
+  title: scheduled 
+  schedule: 
+    cron: '0 * * * *' 
+    concurrencyPolicy: Allow 
+    endOn: 2025-01-31T23:40:45Z
+    timezone: Asia/Kolkata
+  dag:
+    - name: dg-userlocation-v1
+      title: User Location data
+      description: This job read and write user location data from to postgres
+      spec:
+        tags:
+          - User Location
+          - Campaign and Customer Performance Analytics
+        stack: flare:6.0
+        compute: runnable-default
+        stackSpec:
+          job:
+            explain: true
+            inputs:
+              - name: userlocation_in
+                dataset: dataos://ecpgdepot:public/vw_user_location_interaction_daily
+                options:
+                  driver: org.postgresql.Driver
+            logLevel: INFO
+            outputs:
+              - name: userlocation_out
+                dataset: dataos://lakehouse:nivedhaa/userlocation_v1?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
+                description: Data set from Postgres
+                tags:
+                  - Connect
+                title: User Location Data
+            steps:
+              - sequence:
+                  - name: userlocation_out
+                    sql: >
+                      SELECT 
+                        ds,
+                        user_id,
+                        location_id, 
+                        geo_id, 
+                        location_name,
+                        geo_name,
+                        booking_id,
+                        advertiser_id,
+                        campaign_id,
+                        booking_amount,
+                        currency,
+                        booking_status,
+                        impression_count,
+                        interaction_count,
+                        pageview_count
+                      FROM userlocation_in

@@ -1,0 +1,57 @@
+version: v1
+name: wf-lochierarchy-v1
+type: workflow
+tags:
+  - Campaign and Customer Performance Analytics
+description: This job read and write booking data from to postgres
+title: Booking data
+workflow:
+  title: scheduled 
+  schedule: 
+    cron: '0 * * * *' 
+    concurrencyPolicy: Allow 
+    endOn: 2025-01-31T23:40:45Z
+    timezone: Asia/Kolkata
+  dag:
+    - name: dg-lochierarchy-v1
+      title: Location Hierarchy data
+      description: This job read and write booking data from to postgres
+      spec:
+        tags:
+          - Location Hierarchy
+          - Campaign and Customer Performance Analytics
+        stack: flare:6.0
+        compute: runnable-default
+        stackSpec:
+          job:
+            explain: true
+            inputs:
+              - name: loc_hierarchy_in
+                dataset: dataos://ecpgdepot:public/location_hierarchy
+                options:
+                  driver: org.postgresql.Driver
+            logLevel: INFO
+            outputs:
+              - name: loc_hierarchy_out
+                dataset: dataos://lakehouse:nivedhaa/loc_hierarchy_v1?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
+                description: Data set from Postgres
+                tags:
+                  - Connect
+                title: Location Hierarchy data
+            steps:
+              - sequence:
+                  - name: loc_hierarchy_out
+                    sql: >
+                      SELECT 
+                        ds,
+                        location_id, 
+                        region_id, 
+                        geo_id,
+                        hierarchy_level,
+                        location_name,
+                        region_name,
+                        parent_hierarchy_id
+                      FROM loc_hierarchy_in

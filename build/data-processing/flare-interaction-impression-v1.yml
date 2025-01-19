@@ -1,0 +1,60 @@
+version: v1
+name: wf-interaction-impression-v1
+type: workflow
+tags:
+  - Campaign and Customer Performance Analytics
+description: This job read and write impression and interaction data from to postgres
+title: Interaction and Impression Data
+workflow:
+  title: scheduled 
+  schedule: 
+    cron: '0 * * * *' 
+    concurrencyPolicy: Allow 
+    endOn: 2025-01-31T23:40:45Z
+    timezone: Asia/Kolkata
+  dag:
+    - name: dg-interaction-impression-v1
+      title: Interaction and Impression data
+      description: This job read and write interaction and impression data from to postgres
+      spec:
+        tags:
+          - Interaction and Impression Booking
+          - Campaign and Customer Performance Analytics
+        stack: flare:6.0
+        compute: runnable-default
+        stackSpec:
+          job:
+            explain: true
+            inputs:
+              - name: interaction_impression_in
+                dataset: dataos://ecpgdepot:public/combined_impression_interaction_daily
+                options:
+                  driver: org.postgresql.Driver
+            logLevel: INFO
+            outputs:
+              - name: interaction_impression_out
+                dataset: dataos://lakehouse:nivedhaa/interaction_impression_v1?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
+                description: Data set from Postgres
+                tags:
+                  - Connect
+                title: Interaction Impression Booking Data
+            steps:
+              - sequence:
+                  - name: interaction_impression_out
+                    sql: >
+                      SELECT 
+                        ds,
+                        interaction_id, 
+                        user_id, 
+                        page_id,
+                        interaction_type,
+                        session_id,
+                        device_type,
+                        impression_id,
+                        impression_count,
+                        ad_id,
+                        campaign_id
+                      FROM interaction_impression_in

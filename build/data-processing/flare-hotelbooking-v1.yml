@@ -1,0 +1,60 @@
+version: v1
+name: wf-hotelbooking-v1
+type: workflow
+tags:
+  - Campaign and Customer Performance Analytics
+description: This job read and write hotel booking data from to postgresql
+title: Hotel Booking Data
+workflow:
+  title: scheduled 
+  schedule: 
+    cron: '0 * * * *' 
+    concurrencyPolicy: Allow 
+    endOn: 2025-01-31T23:40:45Z
+    timezone: Asia/Kolkata
+  dag:
+    - name: dg-hotelbooking-v1
+      title: Hotel Booking data
+      description: This job read and write hotel booking data from to postgres
+      spec:
+        tags:
+          - Hotel Booking
+          - Campaign and Customer Performance Analytics
+        stack: flare:6.0
+        compute: runnable-default
+        stackSpec:
+          job:
+            explain: true
+            inputs:
+              - name: hotel_booking_in
+                dataset: dataos://ecpgdepot:public/hotel_click_bookings
+                options:
+                  driver: org.postgresql.Driver
+            logLevel: INFO
+            outputs:
+              - name: hotel_booking_out
+                dataset: dataos://lakehouse:nivedhaa/hotel_bookings_v1?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
+                description: Data set from Postgres
+                tags:
+                  - Connect
+                title: Hotel Click Booking Data
+            steps:
+              - sequence:
+                  - name: hotel_booking_out
+                    sql: >
+                      SELECT 
+                        ds,
+                        location_id, 
+                        geo_id, 
+                        location_name,
+                        geo_name,
+                        booking_id,
+                        advertiser_id,
+                        campaign_id,
+                        user_id,
+                        impression_count,
+                        interaction_count
+                      FROM hotel_booking_in

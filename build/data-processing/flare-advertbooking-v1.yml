@@ -1,0 +1,58 @@
+version: v1
+name: wf-advertbooking-v1
+type: workflow
+tags:
+  - Campaign and Customer Performance Analytics
+description: This job read and write advertiser data from to postgres
+title: Advertiser Data
+workflow:
+  title: scheduled 
+  schedule: 
+    cron: '0 * * * *' 
+    concurrencyPolicy: Allow 
+    endOn: 2025-01-31T23:40:45Z
+    timezone: Asia/Kolkata
+  dag:
+    - name: dg-advertbooking-v1
+      title: Advertiser Booking data
+      description: This job read and write advertiser data from to postgres
+      spec:
+        tags:
+          - Advertiser Booking
+          - Campaign and Customer Performance Analytics
+        stack: flare:6.0
+        compute: runnable-default
+        stackSpec:
+          job:
+            explain: true
+            inputs:
+              - name: advertbooking_in
+                dataset: dataos://ecpgdepot:public/advertiser_booking_daily
+                options:
+                  driver: org.postgresql.Driver
+            logLevel: INFO
+            outputs:
+              - name: advertbooking_out
+                dataset: dataos://lakehouse:nivedhaa/advertbooking_v1?acl=rw
+                format: Iceberg
+                options:
+                  saveMode: overwrite
+                description: Data set from Postgres
+                tags:
+                  - Connect
+                title: Advertiser Booking Data
+            steps:
+              - sequence:
+                  - name: advertbooking_out
+                    sql: >
+                      SELECT 
+                        ds,
+                        booking_id, 
+                        advertiser_id, 
+                        campaign_id,
+                        booking_amount,
+                        currency,
+                        booking_status,
+                        created_date,
+                        last_modified_date
+                      FROM advertbooking_in
