@@ -1,0 +1,73 @@
+name: soda-userimpressions-quality-v1
+version: v1
+type: workflow
+tags:
+  - workflow
+  - soda-checks
+description: Applying quality checks for the user order impressions data
+workspace: public
+workflow:
+  schedule:
+    cron: '0 * * * *'
+   # endOn: '2023-12-12T22:00:00Z'
+    concurrencyPolicy: Allow
+  dag:
+    - name: soda-userimpressions-quality
+      spec:
+        stack: soda+python:1.0
+        compute: runnable-default
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 250Mi
+          limits:
+            cpu: 1000m
+            memory: 250Mi
+        logLevel: INFO # WARNING, ERROR, DEBUG
+        stackSpec:
+          inputs:
+            - dataset: dataos://lakehouse:nivedhaa/userimpressions_v1?acl=rw
+              options:
+                engine: minerva
+                clusterName: miniature
+              profile:
+                columns:
+                  - include *
+              checks:  
+                - schema:
+                    name: Ensure essential columns are present
+                    fail:
+                      when required column missing: [user_id, booking_id]
+                    attributes:
+                      category: Schema
+                      title: User ID and Booking ID should be there for essential analysis
+
+                - schema:
+                    name: Detect forbidden columns
+                    fail:
+                      when forbidden column present: [credit_card_number, social_security_number]
+                    attributes:
+                      category: Schema
+                      title: Credit Card number and social security number should not be present in the table 
+
+                - invalid_count(user_id) = 1 :
+                    name: User Id  should not be zero
+                    valid min: 1
+                    attributes:
+                      category: Validity
+
+                - invalid_count(booking_id) = 1 :
+                    name: Booking Id  should not be zero
+                    valid min: 1
+                    attributes:
+                      category: Validity
+
+                - missing_count(Booking_id) = 0:
+                    name:  Booking Id should not be zero
+                    attributes:
+                      category: Completeness
+
+                - duplicate_count(user_id) = 0:
+                    name:  Advertisement Id should not be duplicated
+                    attributes:
+                      category: Uniqueness

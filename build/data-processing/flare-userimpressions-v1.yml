@@ -10,7 +10,7 @@ workflow:
   schedule: 
     cron: '0 * * * *' 
     concurrencyPolicy: Allow 
-    endOn: 2025-01-31T23:40:45Z
+    # endOn: 2025-01-31T23:40:45Z
     timezone: Asia/Kolkata
   dag:
     - name: dg-userimpressions-v1
