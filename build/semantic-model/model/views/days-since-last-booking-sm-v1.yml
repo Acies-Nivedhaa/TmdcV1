@@ -1,0 +1,23 @@
+views:
+  - name: days_since_last_booking
+    description: This metric calculates how many days it has been since the last booking for each user
+    public: true
+    meta:
+      title: Days since the last booking
+      # tags:   
+      #   - DPDomain.Marketing
+      #   - DPUsecase.Customer Segmentation
+      #   - DPUsecase.Product Recommendation
+      #   - DPTier.Consumer Aligned
+      metric:
+        expression: "0  * * * *"
+        timezone: "UTC"
+        window: "day"
+    tables:
+      - join_path: hotebooking-sm-v1
+        prefix: true
+        includes:
+          - ds
+          - user_id
+
+

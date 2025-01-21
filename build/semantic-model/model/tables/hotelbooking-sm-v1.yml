@@ -1,0 +1,77 @@
+tables:    
+  - name: hotebooking-sm-v1
+    sql: {{ load_sql('hotelbooking-sm-v1') }}
+    description: "This table stores key details about the users, bookings and advertisers"
+    public: true
+
+  joins:
+    - name: userlocation-sm-v1
+      relationship: many_to_one
+      sql: "{TABLE.location_id}= {userlocation-sm-v1.location_id}"
+
+    - name: userimpressions-sm-v1
+      relationship: one_to_many
+      sql: "{TABLE.booking_id}= {userlocation-sm-v1.booking_id}"   
+
+  dimensions:
+    - name: booking_date
+      type: string
+      column: ds
+      description: "The unique identifier for each booking."
+      primary_key: true
+
+    - name: location_id
+      type: number
+      column: location_id
+      description: "The booking id of the user"
+
+    - name: geo_id
+      type: number
+      column: geo_id
+      description: "Country ID"
+
+    - name: location_name
+      type: string
+      column: location_name
+      description: "Name of the location"
+
+    - name: geo_name
+      type: string
+      column: geo_name
+      description: "Country name"
+
+    - name: booking_id
+      type: number
+      column: booking_id
+      description: "Unique ID for each booking"
+
+    - name: advertiser_id
+      type: number
+      column: advertiser_id
+      description: "Unique ID for advertiser"
+
+    - name: campaign_id
+      type: number
+      column: campaign_id
+      description: "Unique ID for campaign"
+
+    - name: user_id
+      type: number
+      column: user_id
+      description: "Unique ID for user"
+
+    - name: impression_count
+      type: number
+      column: impression_count
+      description: "Number of impressions"
+
+    - name: interaction_count
+      type: number
+      column: interaction_count
+      description: "Number of interactions"
+
+  measures:
+    - name: total_booking
+      sql: "COUNT(DISTINCT {booking_id})"
+      type: number
+      description: "The total number of bookings in the dataset"

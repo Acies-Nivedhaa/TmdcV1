@@ -1,0 +1,58 @@
+tables:    # CHECK DATATYPES AND JOIN
+  - name: lochierarchy-sm-v1
+    sql: {{ load_sql('lochierarchy-sm-v1') }}
+    description: "This table stores key details about the location, users and bookings"
+    public: true
+
+  joins:
+    - name: hotelbooking-sm-v1
+      relationship: one_to_many
+      sql: "{TABLE.location_id}= {userlocation-sm-v1.location_id}"
+
+  dimensions:
+    - name: booking_date
+      type: string
+      column: ds
+      description: "The unique identifier for each booking."
+      primary_key: true
+
+    - name: location_id
+      type: number
+      column: location_id
+      description: "The booking id of the user"
+
+    - name: region_id
+      type: number
+      column: location_id
+      description: "The booking id of the user"
+
+    - name: geo_id
+      type: number
+      column: geo_id
+      description: "Country ID"
+
+    - name: hierarchy_level
+      type: number
+      column: hierarchy_level
+      description: "Level of location hierarchy"
+
+    - name: location_name
+      type: string
+      column: location_name
+      description: "Name of the location"
+
+    - name: geo_name
+      type: string
+      column: geo_name
+      description: "Country name"
+
+    - name: parent_hierarchy_id
+      type: number
+      column: parent_hierarchy_id
+      description: "Country name"
+
+  measures:
+    - name: total_booking
+      sql: "COUNT(DISTINCT {location_id})"
+      type: number
+      description: "The total number of locations in the dataset"

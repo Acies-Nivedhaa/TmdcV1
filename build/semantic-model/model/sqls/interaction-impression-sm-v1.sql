@@ -1,0 +1,15 @@
+SELECT 
+    ds, 
+    interaction_id, 
+    user_id, 
+    page_id, 
+    interaction_type, 
+    interaction_count,
+    session_id,
+    device_type,
+    impression_id,
+    impression_count,
+    ad_id,
+    campaign_id 
+FROM 
+    lakehouse.nivedhaa.interaction_impression_v1

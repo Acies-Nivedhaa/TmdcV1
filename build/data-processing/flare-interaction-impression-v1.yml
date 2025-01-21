@@ -51,6 +51,7 @@ workflow:
                         user_id, 
                         page_id,
                         interaction_type,
+                        interaction_count,
                         session_id,
                         device_type,
                         impression_id,

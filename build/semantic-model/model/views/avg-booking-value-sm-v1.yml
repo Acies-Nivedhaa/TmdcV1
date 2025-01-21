@@ -1,0 +1,23 @@
+views:
+  - name: avg_booking_value
+    description: Average of booking value
+    public: true
+    meta:
+      title: Days since the last booking
+      # tags:   
+      #   - DPDomain.Marketing
+      #   - DPUsecase.Customer Segmentation
+      #   - DPUsecase.Product Recommendation
+      #   - DPTier.Consumer Aligned
+      metric:
+        expression: "0  * * * *"
+        timezone: "UTC"
+        window: "day"
+    tables:
+      - join_path: hotebooking-sm-v1
+        prefix: true
+        includes:
+          - booking_amount
+          - booking_id
+
+

@@ -1,0 +1,68 @@
+tables:    # CHECK DATATYPES AND JOIN
+  - name: userimpressions-sm-v1
+    sql: {{ load_sql('userimpressions-sm-v1') }}
+    description: "This table stores key details about the location, users and bookings"
+    public: true 
+
+  dimensions:
+    - name: booking_date
+      type: string
+      column: ds
+      description: "The unique identifier for each booking."
+      primary_key: true
+
+    - name: user_id
+      type: number
+      column: user_id
+      description: "The id of the user"
+
+    - name: location_id
+      type: number
+      column: location_id
+      description: "Location ID"
+
+    - name: geo_id
+      type: number
+      column: geo_id
+      description: "Name of the location"
+
+    - name: location_name
+      type: string
+      column: location_name
+      description: "Country name"
+
+    - name: geo_name
+      type: string
+      column: geo_name
+      description: "Unique ID for each booking"
+
+    - name: booking_id
+      type: number
+      column: booking_id
+      description: "Unique ID for each booking"
+
+    - name: advertiser_id
+      type: number
+      column: advertiser_id
+      description: "Unique ID for advertiser"
+
+    - name: campaign_id
+      type: number
+      column: campaign_id
+      description: "Unique ID for campaign"
+
+    - name: impression_count
+      type: number
+      column: impression_count
+      description: "Number of impressions"
+
+    - name: interaction_count
+      type: number
+      column: interaction_count
+      description: "Number of interactions"
+
+  measures:
+    - name: total_booking
+      sql: "COUNT(DISTINCT {geo_id})"
+      type: number
+      description: "The total number of countries in the dataset"

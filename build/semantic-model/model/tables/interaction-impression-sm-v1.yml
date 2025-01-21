@@ -1,0 +1,83 @@
+tables:    
+  - name: interaction-impression-sm-v1
+    sql: {{ load_sql('hotelbooking-sm-v1') }}
+    description: "This table stores key details about the users, bookings and advertisers"
+    public: true
+
+  joins:
+    - name: hotelbooking-sm-v1
+      relationship: many_to_one
+      sql: "{TABLE.campaign_id}= {hotelbooking-sm-v1.campaign_id}"
+
+  dimensions:
+    - name: booking_date
+      type: string
+      column: ds
+      description: "The unique identifier for each booking."
+
+    - name: interaction_id
+      type: number
+      column: interaction_id
+      description: "The unique id of the interactions"
+
+    - name: user_id
+      type: number
+      column: user_id
+      description: "The unique id of the user"    
+
+    - name: page_id
+      type: number
+      column: page_id
+      description: "Page ID"
+
+    - name: interaction_type
+      type: string
+      column: interaction_type
+      description: "Type of interaction"
+
+    - name: interaction_count
+      type: number
+      column: interaction_count
+      description: "number of interactions"
+
+    - name: session_id
+      type: number
+      column: session_id
+      description: "ID for each session"
+
+    - name: device_type
+      type: string
+      column: device_type
+      description: "Device type for each booking"
+
+    - name: impression_id
+      type: number
+      column: impression_id
+      description: "Unique ID for impression"
+
+    - name: impression_count
+      type: number
+      column: impression_count
+      description: "Number of impressions"
+
+    - name: ad_id
+      type: number
+      column: ad_id
+      description: "Unique ID for ad"
+
+    - name: campaign_id
+      type: number
+      column: campaign_id
+      description: "Id for Campaigns"
+      primary_key: true
+
+  measures:
+    - name: total_booking
+      sql: "COUNT(DISTINCT {campaign_id})"
+      type: number
+      description: "The total number of campaigns in the dataset"
+
+    - name: total_impressions
+      sql: "sum({impression_count})"
+      type: number
+      description: "The total number of impressions in the dataset"

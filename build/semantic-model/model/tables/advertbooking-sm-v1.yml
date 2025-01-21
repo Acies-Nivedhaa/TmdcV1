@@ -1,0 +1,64 @@
+tables:
+  - name: advertbooking-sm-v1
+    sql: {{ load_sql('advertbooking-sm-v1') }}
+    description: "This table stores key details about the bookings, advertisememt and campaigns"
+    public: true
+
+  joins:
+    - name: hotelbooking-sm-v1
+      relationship: one_to_many
+      sql: "{TABLE.advertiser_id}= {hotelbooking-sm-v1.advertiser_id}"
+
+  dimensions:
+    - name: booking_date
+      type: string
+      column: ds
+      description: "The unique identifier for each booking."
+
+    - name: booking_id
+      type: number
+      column: booking_id
+      description: "The booking id of the user"
+      primary_key: true
+
+    - name: advertiser_id
+      type: number
+      column: advertiser_id
+      description: "Unique ID for advertiser"
+      primary_key: true
+
+    - name: campaign_id
+      type: number
+      column: campaign_id
+      description: "Unique ID for campaign"
+
+    - name: booking_amount
+      type: number
+      column: booking_amount
+      description: "The revenue from each booking"
+
+    - name: currency
+      type: string
+      column: currency
+      description: "The type of currency used"
+
+    - name: booking_status
+      type: string
+      column: booking_status
+      description: "The type of currency used"
+
+    - name: created_date
+      type: string
+      column: created_date
+      description: "The type of currency used"
+
+    - name: last_modified_date
+      type: string
+      column: last_modified_date
+      description: "The type of currency used"
+
+  measures:
+    - name: total_advertisers
+      sql: "COUNT(DISTINCT {advertiser_id})"
+      type: number
+      description: "The total number of advertisers in the dataset"

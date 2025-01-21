@@ -1,0 +1,12 @@
+SELECT 
+    ds, 
+    booking_id, 
+    advertiser_id, 
+    campaign_id, 
+    booking_amount, 
+    currency,
+    booking_status,
+    created_date,
+    last_modified_date 
+FROM 
+    lakehouse.nivedhaa.advertbooking_v1

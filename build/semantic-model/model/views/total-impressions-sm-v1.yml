@@ -1,0 +1,22 @@
+views:
+  - name: total-impressions
+    description: Sum of impression count
+    public: true
+    meta:
+      title: Number of impression counts
+      # tags:   
+      #   - DPDomain.Marketing
+      #   - DPUsecase.Customer Segmentation
+      #   - DPUsecase.Product Recommendation
+      #   - DPTier.Consumer Aligned
+      metric:
+        expression: "0  * * * *"
+        timezone: "UTC"
+        window: "day"
+    tables:
+      - join_path: interaction-impression-sm-v1
+        prefix: true
+        includes:
+          - impression_count
+
+

@@ -1,0 +1,14 @@
+SELECT 
+    ds, 
+    user_id, 
+    location_id, 
+    geo_id, 
+    location_name, 
+    geo_name,
+    booking_id,
+    advertiser_id,
+    campaign_id,
+    impression_count,
+    interaction_count 
+FROM 
+    lakehouse.nivedhaa.userimpressions_v1
